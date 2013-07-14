@@ -33,12 +33,10 @@ if fqdn
   file '/etc/hostname' do
     content "#{hostname}\n"
     mode "0644"
-    notifies :reload, "ohai[reload]"
   end
 
   execute "hostname #{hostname}" do
     only_if { node['hostname'] != hostname }
-    notifies :reload, "ohai[reload]"
   end
 
   hostsfile_entry "localhost" do
@@ -52,11 +50,11 @@ if fqdn
     hostname fqdn
     aliases [ hostname ]
     action :create
-    notifies :reload, "ohai[reload]"
+    notifies :reload, "ohai[reload]", :immediately
   end
 
   ohai "reload" do
-    action :nothing
+    action :reload
   end
 else
   log "Please set the set_fqdn attribute to desired hostname" do
